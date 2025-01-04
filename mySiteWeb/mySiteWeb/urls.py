@@ -19,6 +19,8 @@ from django.urls import path
 from app1 import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('app1/', views.index, name='index'),
+    path("admin/", admin.site.urls),
+    path('accueil/', views.accueil, name='accueil'),
+    path('connexion/', views.connexion, name='connexion'),
+    path('reservation/', views.reservation, name='reservation'),
 ]
