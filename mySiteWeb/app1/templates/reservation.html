@@ -41,7 +41,7 @@
         <div class="container">
             <a href="{% url 'accueil' %}" class="navbar-brand d-flex align-items-center">
                 <img src="{% static 'images/logoUFR.png' %}" alt="Logo Bibliothèque" style="max-height: 40px;">
-                <span class="ms-2">Bibliothèque Universitaire</span>
+                <span class="ms-2">Bibliothèques Universitaires</span>
             </a>
             <div class="dropdown">
                 <a href="#" class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown">
@@ -52,7 +52,7 @@
                     <li><a class="dropdown-item" href="#">Mon compte</a></li>
                     <li><a class="dropdown-item" href="#">Mes données personnelles</a></li>
                     <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="{% url 'accueil' %}">Déconnexion</a></li>
+                    <li><a class="dropdown-item" href="{% url 'logout' %}">Déconnexion</a></li>
                 </ul>
             </div>
         </div>
@@ -102,7 +102,13 @@
     </main>
 
     <footer class="bg-dark text-white text-center py-3 mt-5">
-        <p class="mb-0">© 2024 Bibliothèque Universitaire. Tous droits réservés.</p>
+        <div class="container">
+            <p class="mb-0 mt-4">
+                <a href="{% static 'documents/Règlement intérieur de la bibliothèque SEGMI.pdf' %}" class="text-info" target="_blank">Règlement de la bibliothèque</a> |
+                <a href="{% static 'documents/Guide Bibliothèque SEGMI 2022.pdf' %}" class="text-info" target="_blank">Guide de la bibliothèque</a> |
+                © 2024 Bibliothèque Universitaire. Tous droits réservés.
+            </p>
+        </div>
     </footer>
 
     <!-- Script Bootstrap -->
