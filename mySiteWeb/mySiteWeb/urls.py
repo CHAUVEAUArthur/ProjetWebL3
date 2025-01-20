@@ -1,5 +1,5 @@
 """
-URL configuration for mySiteWeb project.
+URL configuration for monsiteweb project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/5.1/topics/http/urls/
@@ -22,8 +22,9 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path('accueil/', views.accueil, name='accueil'),
     path('connexion/', views.connexion, name='connexion'),
-    path('process_login/', views.process_login, name='process_login'),
+    path('mon_compte/', views.mon_compte, name='mon_compte'),
     path('reservation/', views.reservation, name='reservation'),
     path('deconnexion/', views.deconnexion, name='logout'),
     path('salles/', views.salles, name='salles'),
 ]
+
