@@ -251,7 +251,7 @@
                         document.getElementById('startTime').value = info.startStr.substring(11, 16);
                         document.getElementById('endTime').value = info.endStr.substring(11, 16);
                         document.getElementById('participants').value = "2";
-                        document.getElementById('participant1').value = "{{ request.user.username }}";
+                        document.getElementById('participant1').value = "{{ request.user.email }}";
                         document.getElementById('participant2').value = "";
                         document.getElementById('participant3Div').style.display = "none";
                         document.getElementById('participant4Div').style.display = "none";
@@ -270,6 +270,21 @@
                 var participants = parseInt(this.value);
                 document.getElementById('participant3Div').style.display = participants >= 3 ? "block" : "none";
                 document.getElementById('participant4Div').style.display = participants === 4 ? "block" : "none";
+            });
+
+            document.getElementById('reservationForm').addEventListener('submit', function(event) {
+                var startTime = document.getElementById('startTime').value;
+                var endTime = document.getElementById('endTime').value;
+
+                var start = new Date('1970-01-01T' + startTime + ':00');
+                var end = new Date('1970-01-01T' + endTime + ':00');
+
+                var diff = (end - start) / (1000 * 60 * 60); // Différence en heures
+
+                if (diff > 3) {
+                    alert('La durée de réservation ne peut pas dépasser 3 heures.');
+                    event.preventDefault();
+                }
             });
 
             calendar1.render();

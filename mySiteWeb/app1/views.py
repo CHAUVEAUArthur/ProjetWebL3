@@ -34,6 +34,7 @@ def mon_compte(request):
         }
     ]
     return render(request, 'mon_compte.html', {'reservations': reservations})
+
 def accueil(request):
     return render(request, "accueil.html")
 
