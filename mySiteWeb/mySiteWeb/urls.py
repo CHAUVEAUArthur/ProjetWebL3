@@ -22,9 +22,9 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path('accueil/', views.accueil, name='accueil'),
     path('connexion/', views.connexion, name='connexion'),
-    path('mon_compte/', views.mon_compte, name='mon_compte'),
-    path('reservation/', views.reservation, name='reservation'),
+    path('compte/', views.compte, name='compte'),
     path('deconnexion/', views.deconnexion, name='logout'),
     path('salles/', views.salles, name='salles'),
+    path('confirmation/', views.confirmation, name='confirmation'),
 ]
 

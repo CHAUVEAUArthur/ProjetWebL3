@@ -56,39 +56,54 @@
         .salle a:hover {
             background-color: #0056b3;
         }
+
+        .quota-info {
+            color: white;
+            margin-right: 20px;
+        }
     </style>
 </head>
 
 <body>
     <!-- Barre de navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div class="container">
+        <div class="container d-flex justify-content-between align-items-center">
             <a href="{% url 'accueil' %}" class="navbar-brand d-flex align-items-center">
                 <img src="{% static 'images/logoUFR.png' %}" alt="Logo Bibliothèque" style="max-height: 40px;">
-                <span class="ms-2">Bibliothèques Universitaires</span>
+                <span class="ms-2">Bibliothèques universitaires</span>
             </a>
-            <div class="dropdown">
-                <a href="#" class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown">
-                    {{ request.session.student_number }} <!-- L'identifiant de l'utilisateur connecté -->
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end">
-                    <li><a class="dropdown-item" href="{% url 'accueil' %}">Accueil</a></li>
-                    <li><a class="dropdown-item" href="{% url 'mon_compte' %}">Mon compte</a></li>
-                    <li><a class="dropdown-item" href="{% url 'logout' %}">Déconnexion</a></li>
-                </ul>
+            <div class="d-flex align-items-center">
+                {% if user.is_authenticated %}
+                    <div class="quota-info">
+                        <p class="mb-0">Quota quotidien restant : {{ daily_quota_remaining }} heures</p>
+                        <p class="mb-0">Quota hebdomadaire restant : {{ weekly_quota_remaining }} heures</p>
+                        <p class="mb-0">Quota mensuel restant : {{ monthly_quota_remaining }} heures</p>
+                    </div>
+                {% endif %}
+                <div class="dropdown">
+                    <a href="#" class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown">
+                        {{ request.session.student_number }} <!-- L'identifiant de l'utilisateur connecté -->
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="{% url 'accueil' %}">Accueil</a></li>
+                        <li><a class="dropdown-item" href="{% url 'compte' %}">Mes réservations</a></li>
+                        <li><a class="dropdown-item" href="{% url 'logout' %}">Déconnexion</a></li>
+                    </ul>
+                </div>
             </div>
         </div>
     </nav>
 
-    <div class="container">
-        <h1 class="text-center my-4">Réservation de salles de travail en groupe</h1>
+ 
+    <!-- Contenu de la page -->
+    <div class="container mt-5">
         <div class="row mb-4">
             <div class="col-md-6">
-                <h2 class="text-center">Salle 1</h2>
+                <h2 class="text-center">Box 1</h2>
                 <div id="calendar1" class="salles-container"></div>
             </div>
             <div class="col-md-6">
-                <h2 class="text-center">Salle 2</h2>
+                <h2 class="text-center">Box 2</h2>
                 <div id="calendar2" class="salles-container"></div>
             </div>
         </div>
@@ -103,22 +118,15 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="reservationForm">
+                    <form id="reservationForm" method="post" action="{% url 'salles' %}">
+                        {% csrf_token %}
                         <div class="mb-3">
                             <label for="startTime" class="form-label">Heure de début :</label>
-                            <select id="startTime" name="startTime" class="form-select" required>
-                                {% for hour in hours %}
-                                    <option value="{{ hour }}">{{ hour }}</option>
-                                {% endfor %}
-                            </select>
+                            <input type="time" id="startTime" name="startTime" class="form-control" required>
                         </div>
                         <div class="mb-3">
                             <label for="endTime" class="form-label">Heure de fin :</label>
-                            <select id="endTime" name="endTime" class="form-select" required>
-                                {% for hour in hours %}
-                                    <option value="{{ hour }}">{{ hour }}</option>
-                                {% endfor %}
-                            </select>
+                            <input type="time" id="endTime" name="endTime" class="form-control" required>
                         </div>
                         <div class="mb-3">
                             <label for="participants" class="form-label">Nombre de participants :</label>
@@ -145,9 +153,11 @@
                             <input type="email" id="participant4" name="participant4" class="form-control">
                         </div>
                         <div class="form-check mb-3">
-                            <input type="checkbox" class="form-check-input" id="terms" required>
+                            <input type="checkbox" class="form-check-input" id="terms" name="terms" required>
                             <label class="form-check-label" for="terms">J'ai lu et accepte les <a href="{% static 'documents/Règlement intérieur de la bibliothèque SEGMI.pdf' %}" target="_blank">Conditions d'utilisation</a></label>
                         </div>
+                        <input type="hidden" id="room" name="room">
+                        <input type="hidden" id="date" name="date">
                         <button type="submit" class="btn btn-primary">Valider</button>
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Retour</button>
                     </form>
@@ -206,6 +216,8 @@
                         document.getElementById('participant3Div').style.display = "none";
                         document.getElementById('participant4Div').style.display = "none";
                         document.getElementById('terms').checked = false;
+                        document.getElementById('room').value = 'Box 1'; // Pré-remplir la salle
+                        document.getElementById('date').value = info.startStr.substring(0, 10); // Pré-remplir la date
 
                         // Afficher le modal de réservation
                         var reservationModal = new bootstrap.Modal(document.getElementById('reservationModal'));
@@ -256,6 +268,8 @@
                         document.getElementById('participant3Div').style.display = "none";
                         document.getElementById('participant4Div').style.display = "none";
                         document.getElementById('terms').checked = false;
+                        document.getElementById('room').value = 'Box 2'; // Pré-remplir la salle
+                        document.getElementById('date').value = info.startStr.substring(0, 10); // Pré-remplir la date
 
                         // Afficher le modal de réservation
                         var reservationModal = new bootstrap.Modal(document.getElementById('reservationModal'));
@@ -292,5 +306,15 @@
         });
     </script>
 </body>
+
+<footer class="bg-dark text-white text-center py-3 mt-5">
+    <div class="container content-background">
+        <p class="mb-0 mt-4">
+            <a href="{% static 'documents/Règlement intérieur de la bibliothèque SEGMI.pdf' %}" class="text-info" target="_blank">Règlement de la bibliothèque</a> |
+            <a href="{% static 'documents/Guide Bibliothèque SEGMI 2022.pdf' %}" class="text-info" target="_blank">Guide de la bibliothèque</a> |
+            © 2024 Bibliothèque Universitaire. Tous droits réservés.
+        </p>
+    </div>
+</footer>
 
 </html>

@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Accueil - Bibliothèque Universitaire</title>
+    <title>Mes Réservations - Bibliothèque Universitaire</title>
     <!-- Lien vers Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Lien vers le fichier CSS -->
@@ -60,20 +60,32 @@
 
     <main class="container mt-5">
         <div class="text-center content-background">
-            <h2 class="mb-4">Bienvenue sur le portail de réservation de salles de travail en groupe à la bibliothèque de l'UFR SEGMI</h2>
-            <p>Réservez facilement une salle de travail en suivant ces étapes :</p>
-            <ol class="text-start">
-                <li><strong>Connexion :</strong> Utilisez vos identifiants universitaires pour vous connecter.</li>
-                <li><strong>Choix de la salle et du créneau :</strong> Choisissez une salle disponible à l'heure souhaitée.</li>
-                <li><strong>Formulaire de réservation :</strong> Complétez le formulaire de réservation.</li>
-                <li><strong>Validation :</strong> Validez votre réservation.</li>
-            </ol>
-            <p>Pour toute assistance, contactez le personnel de la bibliothèque.</p>
-            
-            {% if user.is_authenticated %}
-                <div class="text-center">
-                    <a href="{% url 'salles' %}" class="btn btn-primary">Réserver une salle</a>
-                </div>
+            <h2 class="mb-4">Mes Réservations</h2>
+            {% if reservations %}
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">Salle</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Heure de début</th>
+                            <th scope="col">Heure de fin</th>
+                            <th scope="col">Participants</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for reservation in reservations %}
+                            <tr>
+                                <td>{{ reservation.room }}</td>
+                                <td>{{ reservation.start_time|date:"d/m/Y" }}</td>
+                                <td>{{ reservation.start_time|date:"H:i" }}</td>
+                                <td>{{ reservation.end_time|date:"H:i" }}</td>
+                                <td>{{ reservation.participants }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>Vous n'avez aucune réservation pour le moment.</p>
             {% endif %}
         </div>
     </main>
