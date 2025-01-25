@@ -12,56 +12,6 @@
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css" rel="stylesheet">
     <!-- Lien vers le fichier CSS -->
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <style>
-        body {
-            background-color: #f9f9f9;
-        }
-
-        .salles-container {
-            margin-top: 20px;
-        }
-
-        .salle {
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            text-align: center;
-            width: 100%;
-        }
-
-        .salle img {
-            max-width: 100%;
-            border-radius: 8px;
-        }
-
-        .salle h2 {
-            margin-top: 10px;
-        }
-
-        .salle p {
-            margin: 10px 0;
-        }
-
-        .salle a {
-            display: inline-block;
-            margin-top: 10px;
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
-            border-radius: 5px;
-            text-decoration: none;
-        }
-
-        .salle a:hover {
-            background-color: #0056b3;
-        }
-
-        .quota-info {
-            color: white;
-            margin-right: 20px;
-        }
-    </style>
 </head>
 
 <body>
@@ -95,9 +45,12 @@
     </nav>
 
  
-    <!-- Contenu de la page -->
+    <!-- Contenu principal -->
     <div class="container mt-5">
-        <div class="row mb-4">
+        <h1 class="text-center mb-5">Gestion des Réservations des Salles</h1>
+
+        <!-- Calendrier pour la gestion des salles -->
+        <div class="row">
             <div class="col-md-6">
                 <h2 class="text-center">Box 1</h2>
                 <div id="calendar1" class="salles-container"></div>

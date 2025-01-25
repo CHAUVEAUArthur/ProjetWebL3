@@ -1,5 +1,23 @@
-body {
-    background-color: #f9f9f9;
+html, body {
+    background: url("{% static 'images/SEGMI_av2022.jpeg' %}") no-repeat center center fixed;
+    background-size: cover;
+    height: 100%;
+    margin: 0;
+}
+
+.flex-grow-1 {
+    flex-grow: 1;
+}
+
+.content-background {
+    background-color: rgba(255, 255, 255, 0.8); 
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.quota-info {
+    color: white;
+    margin-right: 20px;
 }
 
 .navbar {
