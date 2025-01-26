@@ -1,0 +1,46 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choix de Connexion</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .choice-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+        }
+        .choice-content {
+            max-width: 600px;
+            width: 100%;
+        }
+        .choice-button {
+            margin-top: 20px;
+        }
+        .logo {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="choice-container">
+        <div class="choice-content">
+            <div class="logo">
+                <img src="{% static 'images/logoUFR.png' %}" alt="Logo Université Paris Nanterre">
+            </div>
+            <h2>Vous êtes un étudiant ?</h2>
+            <a href="{% url 'connexion_etu' %}" class="btn btn-primary choice-button">Connexion étudiant</a>
+            <h2 class="mt-5">Vous êtes un administrateur ?</h2>
+            <a href="{% url 'admin_login' %}" class="btn btn-secondary choice-button">Connexion administrateur</a>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

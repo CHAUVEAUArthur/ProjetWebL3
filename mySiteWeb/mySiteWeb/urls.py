@@ -21,10 +21,12 @@ from app1 import views
 urlpatterns = [
     path("admin/", admin.site.urls),
     path('accueil/', views.accueil, name='accueil'),
-    path('connexion/', views.connexion, name='connexion'),
+    path('choix-connexion/', views.choix_connexion, name='choix_connexion'),
+    path('connexion_etu/', views.connexion_etu, name='connexion_etu'),
+    path('admin/login/', views.admin_login, name='admin_login'),
+    path('admin/reservations/', views.admin_reservations, name='admin_reservations'),
+    path('deconnexion/', views.deconnexion, name='deconnexion'),
     path('compte/', views.compte, name='compte'),
-    path('deconnexion/', views.deconnexion, name='logout'),
     path('salles/', views.salles, name='salles'),
     path('confirmation/', views.confirmation, name='confirmation'),
 ]
-

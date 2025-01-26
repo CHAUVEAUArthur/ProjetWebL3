@@ -1,32 +1,18 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mes Réservations - Bibliothèque Universitaire</title>
-    <!-- Lien vers Bootstrap -->
+    <title>Réservations - Administrateur</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Lien vers le fichier CSS -->
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <style>
-        body {
-            background: url("{% static 'images/SEGMI_av2022.jpeg' %}") no-repeat center center fixed;
-            background-size: cover;
-        }
         .content-background {
             background-color: rgba(255, 255, 255, 0.8); /* Fond blanc semi-transparent */
             padding: 20px;
             border-radius: 8px;
         }
-        .quota-info {
-            color: white;
-            margin-right: 20px;
-        }
     </style>
 </head>
-
 <body>
     <header class="bg-primary text-white text-center py-3">
         <div class="container d-flex justify-content-between align-items-center">
@@ -36,35 +22,27 @@
             </a>
             <div class="d-flex align-items-center">
                 {% if user.is_authenticated %}
-                    <div class="quota-info">
-                        <p class="mb-0">Quota quotidien restant : {{ daily_quota_remaining }} heures</p>
-                        <p class="mb-0">Quota hebdomadaire restant : {{ weekly_quota_remaining }} heures</p>
-                        <p class="mb-0">Quota mensuel restant : {{ monthly_quota_remaining }} heures</p>
-                    </div>
                     <div class="dropdown">
                         <a href="#" class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown">
-                            {{ request.session.student_number }} <!-- L'identifiant de l'utilisateur connecté -->
+                            {{ request.user.username }} <!-- L'identifiant de l'utilisateur connecté -->
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li><a class="dropdown-item" href="{% url 'accueil' %}">Accueil</a></li>
-                            <li><a class="dropdown-item" href="{% url 'compte' %}">Mes réservations</a></li>
                             <li><a class="dropdown-item" href="{% url 'deconnexion' %}">Déconnexion</a></li>
                         </ul>
                     </div>
-                {% else %}
-                    <a href="{% url 'connexion' %}" class="btn btn-light">Connexion</a>
                 {% endif %}
             </div>
         </div>
     </header>
-
     <main class="container mt-5">
         <div class="text-center content-background">
-            <h2 class="mb-4">Mes Réservations</h2>
+            <h2 class="mb-4">Toutes les Réservations</h2>
             {% if reservations %}
                 <table class="table table-striped">
                     <thead>
                         <tr>
+                            <th scope="col">Utilisateur</th>
                             <th scope="col">Salle</th>
                             <th scope="col">Date</th>
                             <th scope="col">Heure de début</th>
@@ -75,6 +53,7 @@
                     <tbody>
                         {% for reservation in reservations %}
                             <tr>
+                                <td>{{ reservation.user.username }}</td>
                                 <td>{{ reservation.room }}</td>
                                 <td>{{ reservation.start_time|date:"d/m/Y" }}</td>
                                 <td>{{ reservation.start_time|date:"H:i" }}</td>
@@ -85,11 +64,10 @@
                     </tbody>
                 </table>
             {% else %}
-                <p>Vous n'avez aucune réservation pour le moment.</p>
+                <p>Aucune réservation n'a été effectuée pour le moment.</p>
             {% endif %}
         </div>
     </main>
-
     <footer class="bg-dark text-white text-center py-3 mt-5">
         <div class="container content-background">
             <p class="mb-0 mt-4">
@@ -99,9 +77,6 @@
             </p>
         </div>
     </footer>
-
-    <!-- Lien vers Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>

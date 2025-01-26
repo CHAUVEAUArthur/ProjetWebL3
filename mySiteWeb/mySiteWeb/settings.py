@@ -136,5 +136,6 @@ EMAIL_HOST_PASSWORD = 'scxgwlbqtaljrhth'
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 
-# filepath: /Users/hassanjatta/Library/Mobile Documents/com~apple~CloudDocs/MIAGE/ProjetWebL3/mySiteWeb/mySiteWeb/settings.py
-LOGIN_URL = 'connexion'  # Remplacez 'login' par le nom de votre vue de connexion
+# Utiliser le modèle d'utilisateur personnalisé
+# URL de redirection pour les utilisateurs non authentifiés
+LOGIN_URL = 'connexion_etu'  # URL de connexion pour les étudiants

@@ -43,16 +43,20 @@
                     </div>
                     <div class="dropdown">
                         <a href="#" class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown">
-                            {{ request.session.student_number }}
+                            {% if request.user.is_staff %}
+                                {{ request.user.username }}
+                            {% else %}
+                                {{ request.session.student_number }}
+                            {% endif %}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li><a class="dropdown-item" href="{% url 'accueil' %}">Accueil</a></li>
                             <li><a class="dropdown-item" href="{% url 'compte' %}">Mes réservations</a></li>
-                            <li><a class="dropdown-item" href="{% url 'logout' %}">Déconnexion</a></li>
+                            <li><a class="dropdown-item" href="{% url 'deconnexion' %}">Déconnexion</a></li>
                         </ul>
                     </div>
                 {% else %}
-                    <a href="{% url 'connexion' %}" class="btn btn-light">Connexion</a>
+                    <a href="{% url 'choix_connexion' %}" class="btn btn-light">Connexion</a>
                 {% endif %}
             </div>
         </div>

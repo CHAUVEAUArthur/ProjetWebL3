@@ -6,50 +6,28 @@ from datetime import datetime, timedelta
 from django.core.mail import send_mail
 from django import forms
 from django.utils import timezone
-from django.contrib.auth import login, authenticate
-from django.contrib.auth import logout
+from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .models import Reservation
+from .models import Reservation, Admin
+
 from django.contrib.auth.models import User
+from django import forms
+
 
 # Create your views here.
 
+class EmailForm(forms.Form):
+    email = forms.EmailField()
 
-@login_required
-def compte(request):
-    # Définir les quotas
-    QUOTA_JOURNALIER = 3  # en heures
-    QUOTA_HEBDOMADAIRE = 15  # en heures
-    QUOTA_MENSUEL = 75  # en heures
+class CodeForm(forms.Form):
+    code_confirmation = forms.CharField(max_length=4)
 
-    now = timezone.now()
-    start_of_day = datetime.combine(now.date(), datetime.min.time())
-    start_of_week = start_of_day - timedelta(days=now.weekday())
-    start_of_month = start_of_day.replace(day=1)
 
-    daily_reservations = Reservation.objects.filter(user=request.user, start_time__gte=start_of_day, end_time__lte=now)
-    weekly_reservations = Reservation.objects.filter(user=request.user, start_time__gte=start_of_week, end_time__lte=now)
-    monthly_reservations = Reservation.objects.filter(user=request.user, start_time__gte=start_of_month, end_time__lte=now)
+class AdminLoginForm(forms.Form):
+    username = forms.CharField(label='Identifiant', max_length=100)
+    password = forms.CharField(label='Mot de passe', widget=forms.PasswordInput)
 
-    daily_hours = sum((res.end_time - res.start_time).total_seconds() / 3600 for res in daily_reservations)
-    weekly_hours = sum((res.end_time - res.start_time).total_seconds() / 3600 for res in weekly_reservations)
-    monthly_hours = sum((res.end_time - res.start_time).total_seconds() / 3600 for res in monthly_reservations)
-
-    daily_quota_remaining = QUOTA_JOURNALIER - daily_hours
-    weekly_quota_remaining = QUOTA_HEBDOMADAIRE - weekly_hours
-    monthly_quota_remaining = QUOTA_MENSUEL - monthly_hours
-
-    reservations = Reservation.objects.filter(user=request.user).order_by('-start_time')
-
-    context = {
-        "reservations": reservations,
-        "daily_quota_remaining": daily_quota_remaining,
-        "weekly_quota_remaining": weekly_quota_remaining,
-        "monthly_quota_remaining": monthly_quota_remaining,
-    }
-
-    return render(request, "compte.html", context)
 
 def accueil(request):
     if request.user.is_authenticated:
@@ -84,11 +62,12 @@ def accueil(request):
         context = {}
 
     return render(request, "accueil.html", context)
-class EmailForm(forms.Form):
-    email = forms.EmailField()
 
-class CodeForm(forms.Form):
-    code_confirmation = forms.CharField(max_length=4)
+
+
+def choix_connexion(request):
+    return render(request, 'choix_connexion.html')
+
 
 def generate_confirmation_code():
     return ''.join(random.choices('0123456789', k=4))
@@ -96,7 +75,7 @@ def generate_confirmation_code():
 def extract_student_number(email):
     return email.split('@')[0]
 
-def connexion(request):
+def connexion_etu(request):
     if request.method == "POST":
         if 'email' in request.POST:
             email = request.POST.get('email')
@@ -116,7 +95,7 @@ def connexion(request):
                 recipient_list=[email],
             )
 
-            return render(request, "connexion.html", {'email_sent': True})
+            return render(request, "connexion_etu.html", {'email_sent': True, 'email': email})
         elif 'code_confirmation' in request.POST:
             code_saisi = request.POST.get('code_confirmation')
             code_envoye = request.session.get('code_confirmation')
@@ -135,8 +114,9 @@ def connexion(request):
 
                 if tentatives_restantes > 0:
                     # Afficher un message d'erreur et permettre une nouvelle tentative
-                    return render(request, "connexion.html", {
+                    return render(request, "connexion_etudiant.html", {
                         'email_sent': True,
+                        'email': email,
                         'error_message': f"Code de confirmation incorrect. Il vous reste {tentatives_restantes} tentatives."
                     })
                 else:
@@ -148,21 +128,35 @@ def connexion(request):
                         'bloque_jusqu_a': (timezone.now() + timedelta(minutes=1)).isoformat()
                     })
     else:
-        return render(request, "connexion.html")
+        return render(request, "connexion_etu.html", {'email_sent': False})
 
-
-
+def admin_login(request):
+    if request.method == 'POST':
+        form = AdminLoginForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            user = authenticate(request, username=username, password=password)
+            if user is not None and isinstance(user, Admin):
+                login(request, user)
+                return redirect('admin_reservations')
+            else:
+                messages.error(request, 'Identifiant ou mot de passe incorrect.')
+    else:
+        form = AdminLoginForm()
+    return render(request, 'admin_login.html', {'form': form})
 
 def deconnexion(request):
     logout(request)
     return redirect('accueil')
 
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from .models import Reservation
-from django.utils import timezone
-from datetime import datetime, timedelta
+@login_required
+def admin_reservations(request):
+    if not isinstance(request.user, Admin):
+        return redirect('accueil')
+    reservations = Reservation.objects.all().order_by('-start_time')
+    return render(request, 'admin_reservations.html', {'reservations': reservations})
+
 
 @login_required
 def salles(request):
@@ -246,6 +240,42 @@ def salles(request):
         "weekly_quota_remaining": weekly_quota_remaining,
         "monthly_quota_remaining": monthly_quota_remaining,
     })
+
+@login_required
+def compte(request):
+    # Définir les quotas
+    QUOTA_JOURNALIER = 3  # en heures
+    QUOTA_HEBDOMADAIRE = 15  # en heures
+    QUOTA_MENSUEL = 75  # en heures
+
+    now = timezone.now()
+    start_of_day = datetime.combine(now.date(), datetime.min.time())
+    start_of_week = start_of_day - timedelta(days=now.weekday())
+    start_of_month = start_of_day.replace(day=1)
+
+    daily_reservations = Reservation.objects.filter(user=request.user, start_time__gte=start_of_day, end_time__lte=now)
+    weekly_reservations = Reservation.objects.filter(user=request.user, start_time__gte=start_of_week, end_time__lte=now)
+    monthly_reservations = Reservation.objects.filter(user=request.user, start_time__gte=start_of_month, end_time__lte=now)
+
+    daily_hours = sum((res.end_time - res.start_time).total_seconds() / 3600 for res in daily_reservations)
+    weekly_hours = sum((res.end_time - res.start_time).total_seconds() / 3600 for res in weekly_reservations)
+    monthly_hours = sum((res.end_time - res.start_time).total_seconds() / 3600 for res in monthly_reservations)
+
+    daily_quota_remaining = QUOTA_JOURNALIER - daily_hours
+    weekly_quota_remaining = QUOTA_HEBDOMADAIRE - weekly_hours
+    monthly_quota_remaining = QUOTA_MENSUEL - monthly_hours
+
+    reservations = Reservation.objects.filter(user=request.user).order_by('-start_time')
+
+    context = {
+        "reservations": reservations,
+        "daily_quota_remaining": daily_quota_remaining,
+        "weekly_quota_remaining": weekly_quota_remaining,
+        "monthly_quota_remaining": monthly_quota_remaining,
+    }
+
+    return render(request, "compte.html", context)
+
 
 def confirmation(request):
     return render(request, "confirmation.html")
