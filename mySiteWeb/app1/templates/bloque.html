@@ -1,8 +1,28 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vous êtes temporairement bloqué</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="icon" href="{% static 'images/logoUFR.png' %}">
+    <style>
+        body {
+            background: url("{% static 'images/SEGMI_av2022.jpeg' %}") no-repeat center center fixed;
+            background-size: cover;
+        }
+        .content-background {
+            background-color: rgba(255, 255, 255, 0.8); 
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .quota-info {
+            color: white;
+            margin-right: 20px;
+        }
+    </style>
     <script>
         function startCountdown(minutes, seconds) {
             var countdownElement = document.getElementById('countdown');
@@ -30,15 +50,33 @@
         }
     </script>
 </head>
-<body onload="startCountdown({{ minutes }}, {{ seconds }})">
-    <main class="container">
-        <h1 class="mt-5">Vous êtes temporairement bloqué</h1>
-        <p>Vous avez dépassé le nombre maximal de tentatives de connexion autorisées. Veuillez réessayer dans quelques instants.</p>
-        <p id="countdown" class="mt-3">Chargement du compte à rebours...</p>
+
+<body class="d-flex flex-column min-vh-100" onload="startCountdown({{ minutes }}, {{ seconds }})">
+    <header class="bg-primary text-white text-center py-3">
+        <div class="container d-flex justify-content-between align-items-center">
+            <a href="{% url 'accueil' %}" class="navbar-brand d-flex align-items-center">
+                <img src="{% static 'images/logoUFR.png' %}" alt="Logo Bibliothèque" style="max-height: 40px;">
+                <span class="ms-2">Bibliothèque universitaire</span>
+            </a>
+        </div>
+    </header>
+
+    <main class="container flex-grow-1 mt-5">
+        <div class="text-center content-background">
+            <h1 class="mt-5">Vous êtes temporairement bloqué</h1>
+            <p>Vous avez dépassé le nombre maximal de tentatives de connexion autorisées. Veuillez réessayer dans quelques instants.</p>
+            <p id="countdown" class="mt-3">Chargement du compte à rebours...</p>
+        </div>
     </main>
 
-    <footer class="bg-dark text-white text-center py-3 mt-5">
-        <p class="mb-0">© 2024 Bibliothèque Universitaire. Tous droits réservés.</p>
+    <footer class="bg-dark text-white text-center py-3">
+        <div class="container content-background">
+            <p class="mb-0 mt-4">
+                <a href="{% static 'documents/Règlement intérieur de la bibliothèque SEGMI.pdf' %}" class="text-info" target="_blank">Règlement de la bibliothèque</a> |
+                <a href="{% static 'documents/Guide Bibliothèque SEGMI 2022.pdf' %}" class="text-info" target="_blank">Guide de la bibliothèque</a> |
+                © 2024 Bibliothèque Universitaire. Tous droits réservés.
+            </p>
+        </div>
     </footer>
 
     <!-- Script Bootstrap -->
