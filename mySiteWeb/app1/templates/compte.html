@@ -16,7 +16,7 @@
             background-size: cover;
         }
         .content-background {
-            background-color: rgba(255, 255, 255, 0.8); /* Fond blanc semi-transparent */
+            background-color: rgba(255, 255, 255, 0.8); 
             padding: 20px;
             border-radius: 8px;
         }
@@ -27,12 +27,12 @@
     </style>
 </head>
 
-<body>
+<body class="d-flex flex-column min-vh-100">
     <header class="bg-primary text-white text-center py-3">
         <div class="container d-flex justify-content-between align-items-center">
             <a href="{% url 'accueil' %}" class="navbar-brand d-flex align-items-center">
                 <img src="{% static 'images/logoUFR.png' %}" alt="Logo Bibliothèque" style="max-height: 40px;">
-                <span class="ms-2">Bibliothèques universitaires</span>
+                <span class="ms-2">Bibliothèque universitaire</span>
             </a>
             <div class="d-flex align-items-center">
                 {% if user.is_authenticated %}
@@ -43,7 +43,11 @@
                     </div>
                     <div class="dropdown">
                         <a href="#" class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown">
-                            {{ request.session.student_number }} <!-- L'identifiant de l'utilisateur connecté -->
+                            {% if request.user.is_staff %}
+                                {{ request.user.username }}
+                            {% else %}
+                                {{ request.session.student_number }}
+                            {% endif %}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li><a class="dropdown-item" href="{% url 'accueil' %}">Accueil</a></li>
@@ -52,13 +56,13 @@
                         </ul>
                     </div>
                 {% else %}
-                    <a href="{% url 'connexion' %}" class="btn btn-light">Connexion</a>
+                    <a href="{% url 'choix_connexion' %}" class="btn btn-light">Connexion</a>
                 {% endif %}
             </div>
         </div>
     </header>
 
-    <main class="container mt-5">
+    <main class="container flex-grow-1 mt-5">
         <div class="text-center content-background">
             <h2 class="mb-4">Mes Réservations</h2>
             {% if reservations %}
@@ -90,7 +94,7 @@
         </div>
     </main>
 
-    <footer class="bg-dark text-white text-center py-3 mt-5">
+    <footer class="bg-dark text-white text-center py-3">
         <div class="container content-background">
             <p class="mb-0 mt-4">
                 <a href="{% static 'documents/Règlement intérieur de la bibliothèque SEGMI.pdf' %}" class="text-info" target="_blank">Règlement de la bibliothèque</a> |
