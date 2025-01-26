@@ -114,7 +114,7 @@ def connexion_etu(request):
 
                 if tentatives_restantes > 0:
                     # Afficher un message d'erreur et permettre une nouvelle tentative
-                    return render(request, "connexion_etudiant.html", {
+                    return render(request, "connexion_etu.html", {
                         'email_sent': True,
                         'email': email,
                         'error_message': f"Code de confirmation incorrect. Il vous reste {tentatives_restantes} tentatives."

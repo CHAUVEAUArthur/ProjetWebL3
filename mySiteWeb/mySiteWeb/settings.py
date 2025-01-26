@@ -139,3 +139,4 @@ EMAIL_USE_SSL = False
 # Utiliser le modèle d'utilisateur personnalisé
 # URL de redirection pour les utilisateurs non authentifiés
 LOGIN_URL = 'connexion_etu'  # URL de connexion pour les étudiants
+
